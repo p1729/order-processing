@@ -4,48 +4,55 @@ import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public enum OrderStore implements Iterable<Order> {
     INSTANCE;
 
     private final List<Order> store = new ArrayList<>();
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public static OrderStore getInstance() {
         return INSTANCE;
     }
 
     public Optional<Order> getOrderById(long orderId) {
-        synchronized (store) {
-            return store.stream().filter(o -> o.getOrderId() == orderId).findFirst();
-        }
+        readWriteLock.readLock().lock();
+        Optional<Order> order = store.stream().filter(o -> o.getOrderId() == orderId).findFirst();
+        readWriteLock.readLock().unlock();
+        return order;
     }
 
-    public boolean addOrder(Order order) {
-        synchronized (store) {
-            return store.add(order);
-        }
+    public void addOrder(Order order) {
+        readWriteLock.writeLock().lock();
+        store.add(order);
+        readWriteLock.writeLock().unlock();
     }
 
     public boolean addOrderVersion(long orderId, OrderVersion orderVersion) {
-        synchronized (store) {
-            return getOrderById(orderId).map(order -> order.getVersions().add(orderVersion)).orElse(false);
-        }
-    }
-
-    public void print() {
-        synchronized (store) {
-            store.forEach(System.out::println);
-        }
+        Optional<Order> orderById = getOrderById(orderId);
+        readWriteLock.writeLock().lock();
+        Boolean isVersionAdded = orderById.map(order -> order.getVersions().add(orderVersion)).orElse(false);
+        readWriteLock.writeLock().unlock();
+        return isVersionAdded;
     }
 
     @Override
     public Iterator<Order> iterator() {
-        synchronized (store) {
-            return Collections.unmodifiableList(store).iterator();
-        }
+        readWriteLock.readLock().lock();
+        Iterator<Order> iterator = Collections.unmodifiableList(store).iterator();
+        readWriteLock.readLock().unlock();
+        return iterator;
     }
 
     public List<Order> getStore() {
-        return store;
+        readWriteLock.readLock().lock();
+        List<Order> orders = new ArrayList<>();
+        store.forEach(o -> {
+            orders.add(Order.swallowCopyOfAllLists(o));
+        });
+        readWriteLock.readLock().unlock();
+        return orders;
     }
 }

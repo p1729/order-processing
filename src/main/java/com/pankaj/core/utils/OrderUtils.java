@@ -5,6 +5,7 @@ import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 import com.pankaj.core.models.Transaction;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class OrderUtils {
 
     public static boolean isOrderCanceled(Order processedOrder) {
         if(Objects.isNull(processedOrder)) return false;
-        return processedOrder.getVersions().stream()
+        return processedOrder.getVersionsForRead().stream()
                 .anyMatch(ver -> ver.getTxnType().equals(TXN_TYPE.CANCEL));
     }
 

@@ -10,152 +10,152 @@ import static org.junit.jupiter.api.Assertions.*;
 class RulesStoreTest {
 
     @Test
-    void givenNoOrderWhenInsertTxnO1V1ThenTxnProcessed() {
+    void givenNoOrder_whenInsertTxnO1V1_thenTxnProcessed() {
         Order order = null;
         Transaction txn = MockData.insertTransactionV1O1;
 
-        assertTrue(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertTrue(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenNoOrderWhenUpdateTxnO1V1ThenTxnGetRejected() {
+    void givenNoOrder_whenUpdateTxnO1V1_thenTxnGetRejected() {
         Order order = null;
         Transaction txn = MockData.updateTransactionV1O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenNoOrderWhenCancelTxnO1V1ThenTxnGetRejected() {
+    void givenNoOrder_whenCancelTxnO1V1_thenTxnGetRejected() {
         Order order = null;
         Transaction txn = MockData.cancelTransactionV1O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenNoOrderWhenUpdateTxnO1V2ThenTxnPending() {
+    void givenNoOrder_whenUpdateTxnO1V2_thenTxnPending() {
         Order order = null;
         Transaction txn = MockData.updateTransactionV2O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertTrue(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertTrue(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenNoOrderWhenCancelTxnO1V2ThenTxnPending() {
+    void givenNoOrder_whenCancelTxnO1V2_thenTxnPending() {
         Order order = null;
         Transaction txn = MockData.cancelTransactionV2O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertTrue(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertTrue(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenNoOrderWhenInsertTxnO1V2ThenTxnRejected() {
+    void givenNoOrder_whenInsertTxnO1V2_thenTxnRejected() {
         Order order = null;
         Transaction txn = MockData.insertTransactionV2O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithInsertWhenUpdateThenTxnProcessed() {
+    void givenOrderwithInsert_whenUpdate_thenTxnProcessed() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.updateTransactionV2O1;
 
-        assertTrue(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertTrue(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithInsertWhenCancelThenTxnProcessed() {
+    void givenOrderWithInsert_whenCancel_thenTxnProcessed() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.cancelTransactionV2O1;
 
-        assertTrue(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertTrue(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithInsertWhenInsertThenTxnRejected() {
+    void givenOrderWithInsert_whenInsert_thenTxnRejected() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.insertTransactionV2O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithInsertWhenUpdateTxnO1V3ThenTxnPending() {
+    void givenOrderWithInsert_whenUpdateTxnO1V3_thenTxnPending() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.updateTransactionV3O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertTrue(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertTrue(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithInsertWhenCancelTxnO1V3ThenTxnPending() {
+    void givenOrderWithInsert_whenCancelTxnO1V3_thenTxnPending() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.cancelTransactionV3O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertTrue(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertTrue(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithUpdateWhenUpdateTxnO1V3ThenTxnProcessed() {
+    void givenOrderWithUpdate_whenUpdateTxnO1V3_thenTxnProcessed() {
         Order order = MockData.orderWithUpdate;
         Transaction txn = MockData.updateTransactionV3O1;
 
-        assertTrue(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertTrue(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithUpdateWhenCancelTxnO1V3ThenTxnProcessed() {
+    void givenOrderWithUpdate_whenCancelTxnO1V3_thenTxnProcessed() {
         Order order = MockData.orderWithUpdate;
         Transaction txn = MockData.cancelTransactionV3O1;
 
-        assertTrue(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertFalse(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertTrue(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertFalse(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithCancelWhenCancelTxnO1V4ThenTxnRejected() {
+    void givenOrderWithCancel_whenCancelTxnO1V4_thenTxnRejected() {
         Order order = MockData.orderWithCancel;
         Transaction txn = MockData.cancelTransactionV4O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 
     @Test
-    void givenOrderWithCancelWhenUpdateTxnO1V4ThenTxnRejected() {
+    void givenOrderWithCancel_whenUpdateTxnO1V4_thenTxnRejected() {
         Order order = MockData.orderWithCancel;
         Transaction txn = MockData.updateTransactionV4O1;
 
-        assertFalse(RulesStore.getTransactionOrderProcessingRule().apply(txn, order));
-        assertFalse(RulesStore.getPendingTransactionOrderRule().apply(txn, order));
-        assertTrue(RulesStore.getRejectedTransactionRule().apply(txn, order));
+        assertFalse(RulesStore.getTransactionOrderProcessingRule().test(txn, order));
+        assertFalse(RulesStore.getPendingTransactionOrderRule().test(txn, order));
+        assertTrue(RulesStore.getRejectedTransactionRule().test(txn, order));
     }
 }

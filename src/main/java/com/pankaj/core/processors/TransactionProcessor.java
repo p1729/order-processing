@@ -33,16 +33,11 @@ public enum TransactionProcessor implements Processor {
     public void process(Transaction txn) {
         executorService.execute(() -> {
                 Order order = orders.getOrderById(txn.getOrderId()).orElse(null);
-                if (RulesStore.getPendingTransactionOrderRule().apply(txn, order)) {
+                if (RulesStore.getPendingTransactionOrderRule().test(txn, order)) {
                     store.putTransactionWithStatus(txn, PENDING);
-                } else if (RulesStore.getRejectedTransactionRule().apply(txn, order)) {
+                } else if (RulesStore.getRejectedTransactionRule().test(txn, order)) {
                     store.putTransactionWithStatus(txn, REJECTED);
-                } else if (RulesStore.getTransactionOrderProcessingRule().apply(txn, order)) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                } else if (RulesStore.getTransactionOrderProcessingRule().test(txn, order)) {
                     store.putTransactionWithStatus(txn, PROCESSED);
                     List<Transaction> pendingTxns = store.getTransactionOfOrdersByStatus(txn.getOrderId(), PENDING);
                     pendingTxns.sort(ORDER_VERSION_COMPARATOR);
