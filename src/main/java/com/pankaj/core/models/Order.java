@@ -14,7 +14,7 @@ public class Order {
     private final long orderId;
     private final List<OrderVersion> versions;
 
-    public static Order swallowCopyOfAllLists(Order order) {
+    public static Order shallowCopyOfAllLists(Order order) {
         return Order.builder()
                 .orderId(order.getOrderId())
                 .versions(order.getVersionsForRead())

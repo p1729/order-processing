@@ -50,7 +50,7 @@ public enum OrderStore implements Iterable<Order> {
         readWriteLock.readLock().lock();
         List<Order> orders = new ArrayList<>();
         store.forEach(o -> {
-            orders.add(Order.swallowCopyOfAllLists(o));
+            orders.add(Order.shallowCopyOfAllLists(o));
         });
         readWriteLock.readLock().unlock();
         return orders;

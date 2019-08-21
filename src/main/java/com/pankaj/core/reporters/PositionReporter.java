@@ -4,6 +4,7 @@ import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 import com.pankaj.core.models.Position;
 import com.pankaj.core.stores.OrderStore;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static com.pankaj.core.enums.SIDE_TYPE.*;
@@ -26,8 +28,8 @@ public enum PositionReporter implements Reporter {
     private final ConcurrentHashMap<String, Long> positions = new ConcurrentHashMap<>();
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    public synchronized void print() {
-        positions.forEach((key, value) -> System.out.println(String.format("%s \t %d", key, value)));
+    public void print() {
+        positions.forEach((key, value) -> System.out.println(String.format("%s %d", key, value)));
     }
 
     //TODO: Refactor for process only new orders

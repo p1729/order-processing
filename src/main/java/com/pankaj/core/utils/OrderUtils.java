@@ -24,7 +24,7 @@ public class OrderUtils {
 
     public static long getNextOrderVersionInSequence(Order order) {
         if(Objects.isNull(order)) return OrderVersion.FIRST_ORDER_VERSION;
-        List<OrderVersion> sortedVers = order.getVersions()
+        List<OrderVersion> sortedVers = order.getVersionsForRead()
                 .stream().sorted().collect(Collectors.toList());
         return sortedVers.get(sortedVers.size()-1).getVersionId() + 1;
     }

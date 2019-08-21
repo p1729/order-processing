@@ -3,14 +3,14 @@ package com.pankaj.core.rules;
 import com.pankaj.core.MockData;
 import com.pankaj.core.models.Order;
 import com.pankaj.core.models.Transaction;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-class RulesStoreTest {
+public class RulesStoreTest {
 
     @Test
-    void givenNoOrder_whenInsertTxnO1V1_thenTxnProcessed() {
+    public void givenNoOrder_whenInsertTxnO1V1_thenTxnProcessed() {
         Order order = null;
         Transaction txn = MockData.insertTransactionV1O1;
 
@@ -20,7 +20,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenNoOrder_whenUpdateTxnO1V1_thenTxnGetRejected() {
+    public void givenNoOrder_whenUpdateTxnO1V1_thenTxnGetRejected() {
         Order order = null;
         Transaction txn = MockData.updateTransactionV1O1;
 
@@ -30,7 +30,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenNoOrder_whenCancelTxnO1V1_thenTxnGetRejected() {
+    public void givenNoOrder_whenCancelTxnO1V1_thenTxnGetRejected() {
         Order order = null;
         Transaction txn = MockData.cancelTransactionV1O1;
 
@@ -40,7 +40,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenNoOrder_whenUpdateTxnO1V2_thenTxnPending() {
+    public void givenNoOrder_whenUpdateTxnO1V2_thenTxnPending() {
         Order order = null;
         Transaction txn = MockData.updateTransactionV2O1;
 
@@ -50,7 +50,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenNoOrder_whenCancelTxnO1V2_thenTxnPending() {
+    public void givenNoOrder_whenCancelTxnO1V2_thenTxnPending() {
         Order order = null;
         Transaction txn = MockData.cancelTransactionV2O1;
 
@@ -60,7 +60,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenNoOrder_whenInsertTxnO1V2_thenTxnRejected() {
+    public void givenNoOrder_whenInsertTxnO1V2_thenTxnRejected() {
         Order order = null;
         Transaction txn = MockData.insertTransactionV2O1;
 
@@ -70,7 +70,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderwithInsert_whenUpdate_thenTxnProcessed() {
+    public void givenOrderwithInsert_whenUpdate_thenTxnProcessed() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.updateTransactionV2O1;
 
@@ -80,7 +80,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithInsert_whenCancel_thenTxnProcessed() {
+    public void givenOrderWithInsert_whenCancel_thenTxnProcessed() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.cancelTransactionV2O1;
 
@@ -90,7 +90,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithInsert_whenInsert_thenTxnRejected() {
+    public void givenOrderWithInsert_whenInsert_thenTxnRejected() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.insertTransactionV2O1;
 
@@ -100,7 +100,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithInsert_whenUpdateTxnO1V3_thenTxnPending() {
+    public void givenOrderWithInsert_whenUpdateTxnO1V3_thenTxnPending() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.updateTransactionV3O1;
 
@@ -110,7 +110,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithInsert_whenCancelTxnO1V3_thenTxnPending() {
+    public void givenOrderWithInsert_whenCancelTxnO1V3_thenTxnPending() {
         Order order = MockData.orderWithInsert;
         Transaction txn = MockData.cancelTransactionV3O1;
 
@@ -120,7 +120,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithUpdate_whenUpdateTxnO1V3_thenTxnProcessed() {
+    public void givenOrderWithUpdate_whenUpdateTxnO1V3_thenTxnProcessed() {
         Order order = MockData.orderWithUpdate;
         Transaction txn = MockData.updateTransactionV3O1;
 
@@ -130,7 +130,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithUpdate_whenCancelTxnO1V3_thenTxnProcessed() {
+    public void givenOrderWithUpdate_whenCancelTxnO1V3_thenTxnProcessed() {
         Order order = MockData.orderWithUpdate;
         Transaction txn = MockData.cancelTransactionV3O1;
 
@@ -140,7 +140,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithCancel_whenCancelTxnO1V4_thenTxnRejected() {
+    public void givenOrderWithCancel_whenCancelTxnO1V4_thenTxnRejected() {
         Order order = MockData.orderWithCancel;
         Transaction txn = MockData.cancelTransactionV4O1;
 
@@ -150,7 +150,7 @@ class RulesStoreTest {
     }
 
     @Test
-    void givenOrderWithCancel_whenUpdateTxnO1V4_thenTxnRejected() {
+    public void givenOrderWithCancel_whenUpdateTxnO1V4_thenTxnRejected() {
         Order order = MockData.orderWithCancel;
         Transaction txn = MockData.updateTransactionV4O1;
 
