@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static com.pankaj.core.enums.TXN_STATUS.*;
+import static com.pankaj.core.enums.TransactionStatus.*;
 import static com.pankaj.core.models.Transaction.ORDER_VERSION_COMPARATOR;
 
 public enum TransactionProcessor implements Processor {

@@ -3,13 +3,13 @@ package com.pankaj.core;
 import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 import com.pankaj.core.models.Transaction;
+import com.pankaj.core.processors.Processor;
+import com.pankaj.core.reporters.Reporter;
 
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.BiPredicate;
 
-import static com.pankaj.core.enums.SIDE_TYPE.*;
-import static com.pankaj.core.enums.TXN_TYPE.*;
+import static com.pankaj.core.enums.SideType.*;
+import static com.pankaj.core.enums.TransactionType.*;
 import static java.util.List.of;
 
 public class MockData {
@@ -95,7 +95,6 @@ public class MockData {
                     new OrderVersion(2L, "RTS", 1000L, UPDATE, BUY))
             )
     );
-    //ABC \t -1000\nXYZ \t 1000\nRTS \t 1000\n
 
     public static List<Order> listOfCancelOrders = List.of(
             new Order(1L, List.of(
@@ -116,7 +115,6 @@ public class MockData {
                     new OrderVersion(2L, "ABC", 10L, UPDATE, BUY))
             )
     );
-    //ABC \t 10\nXYZ \t 100\n
 
     public static List<Order> listOfMixOfOrders = List.of(
             new Order(1L, List.of(
@@ -144,55 +142,7 @@ public class MockData {
                     new OrderVersion(2L, "XYZ", 10L, UPDATE, BUY))
             )
     );
-    //XYZ \t 110\n   RTS \t 0\n
+
     public static List<Transaction> listofOrderVersion = Arrays.asList(updateTransactionV2O1);
 
-
-//    private BiPredicate<Transaction, Order> pendingBiPredicate() {
-//        Map<Long, Integer> map = new HashMap<>();
-//        return (transaction, order) -> {
-//            if(pendingStatusOnMultipleRuns.containsKey(transaction.getTxnId())) {
-//                if(map.containsKey(transaction.getTxnId())) {
-//                    map.put(transaction.getTxnId(), map.get(transaction.getTxnId()) + 1);
-//                } else {
-//                    map.put(transaction.getTxnId(), 1);
-//                }
-//
-//                return pendingStatusOnMultipleRuns.get(transaction.getTxnId()).get(map.get(transaction.getTxnId()));
-//            }
-//            return false;
-//        };
-//    }
-//
-//    private BiPredicate<Transaction, Order> rejectBiPredicate() {
-//        Map<Long, Integer> map = new HashMap<>();
-//        return (transaction, order) -> {
-//            if(rejectStatusOnMultipleRuns.containsKey(transaction.getTxnId())) {
-//                if(map.containsKey(transaction.getTxnId())) {
-//                    map.put(transaction.getTxnId(), map.get(transaction.getTxnId()) + 1);
-//                } else {
-//                    map.put(transaction.getTxnId(), 1);
-//                }
-//
-//                return rejectStatusOnMultipleRuns.get(transaction.getTxnId()).get(map.get(transaction.getTxnId()));
-//            }
-//            return false;
-//        };
-//    }
-//
-//    private BiPredicate<Transaction, Order> processBiPredicate() {
-//        Map<Long, Integer> map = new HashMap<>();
-//        return (transaction, order) -> {
-//            if(processStatusOnMultipleRuns.containsKey(transaction.getTxnId())) {
-//                if(map.containsKey(transaction.getTxnId())) {
-//                    map.put(transaction.getTxnId(), map.get(transaction.getTxnId()) + 1);
-//                } else {
-//                    map.put(transaction.getTxnId(), 1);
-//                }
-//
-//                return processStatusOnMultipleRuns.get(transaction.getTxnId()).get(map.get(transaction.getTxnId()));
-//            }
-//            return false;
-//        };
-//    }
 }

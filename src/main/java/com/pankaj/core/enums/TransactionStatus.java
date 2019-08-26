@@ -1,5 +1,5 @@
 package com.pankaj.core.enums;
 
-public enum TXN_STATUS {
+public enum TransactionStatus {
     PROCESSED, PENDING, REJECTED
 }

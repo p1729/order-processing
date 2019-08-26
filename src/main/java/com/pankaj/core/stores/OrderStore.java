@@ -2,10 +2,13 @@ package com.pankaj.core.stores;
 
 import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
+import com.pankaj.core.utils.OrderUtils;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import static com.pankaj.core.models.Order.shallowCopyOfAllLists;
 
 public enum OrderStore implements Iterable<Order> {
     INSTANCE;
@@ -18,10 +21,7 @@ public enum OrderStore implements Iterable<Order> {
     }
 
     public Optional<Order> getOrderById(long orderId) {
-        readWriteLock.readLock().lock();
-        Optional<Order> order = store.stream().filter(o -> o.getOrderId() == orderId).findFirst();
-        readWriteLock.readLock().unlock();
-        return order;
+        return getOrderByIdForWrite(orderId).map(Order::shallowCopyOfAllLists);
     }
 
     public void addOrder(Order order) {
@@ -31,7 +31,7 @@ public enum OrderStore implements Iterable<Order> {
     }
 
     public boolean addOrderVersion(long orderId, OrderVersion orderVersion) {
-        Optional<Order> orderById = getOrderById(orderId);
+        Optional<Order> orderById = getOrderByIdForWrite(orderId);
         readWriteLock.writeLock().lock();
         Boolean isVersionAdded = orderById.map(order -> order.getVersions().add(orderVersion)).orElse(false);
         readWriteLock.writeLock().unlock();
@@ -40,19 +40,17 @@ public enum OrderStore implements Iterable<Order> {
 
     @Override
     public Iterator<Order> iterator() {
+        List<Order> orders = new ArrayList<>();
         readWriteLock.readLock().lock();
-        Iterator<Order> iterator = Collections.unmodifiableList(store).iterator();
+        store.forEach(o -> orders.add(shallowCopyOfAllLists(o)));
         readWriteLock.readLock().unlock();
-        return iterator;
+        return orders.iterator();
     }
 
-    public List<Order> getStore() {
+    private Optional<Order> getOrderByIdForWrite(long orderId) {
         readWriteLock.readLock().lock();
-        List<Order> orders = new ArrayList<>();
-        store.forEach(o -> {
-            orders.add(Order.shallowCopyOfAllLists(o));
-        });
+        Optional<Order> order = store.stream().filter(o -> o.getOrderId() == orderId).findFirst();
         readWriteLock.readLock().unlock();
-        return orders;
+        return order;
     }
 }

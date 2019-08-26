@@ -2,17 +2,19 @@ package com.pankaj.core.processors;
 
 import com.pankaj.core.MockData;
 import com.pankaj.core.MyTestExecutor;
-import com.pankaj.core.enums.TXN_STATUS;
+import com.pankaj.core.enums.TransactionStatus;
 import com.pankaj.core.models.Transaction;
+import com.pankaj.core.reporters.PositionReporter;
 import com.pankaj.core.rules.RulesStore;
 import com.pankaj.core.stores.OrderStore;
 import com.pankaj.core.stores.TransactionStore;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -30,14 +32,24 @@ import static org.powermock.api.mockito.PowerMockito.*;
 
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({OrderStore.class, TransactionStore.class, RulesStore.class, Executors.class, TransactionProcessor.class})
+@PrepareForTest({OrderStore.class, TransactionStore.class, RulesStore.class, Executors.class, PositionReporter.class,
+        TransactionProcessor.class})
 public class TransactionProcessorTest {
 
     @Captor
     ArgumentCaptor<Transaction> txnCaptor;
 
     @Captor
-    ArgumentCaptor<TXN_STATUS> txnStatuCaptor;
+    ArgumentCaptor<TransactionStatus> txnStatuCaptor;
+
+    @Before
+    public void setup() {
+        mockStatic(PositionReporter.class);
+        PositionReporter rptMock = mock(PositionReporter.class);
+        Whitebox.setInternalState(PositionReporter.class, "INSTANCE", rptMock);
+        when(PositionReporter.getInstance()).thenReturn(rptMock);
+        doAnswer(o -> null).when(rptMock).prepare();
+    }
 
     @Test
     public void givenTxn_whenPendingRuleApplied_thenItsNotProcessed() throws NoSuchFieldException, IllegalAccessException {
@@ -65,7 +77,7 @@ public class TransactionProcessorTest {
         //when
         processor.process(MockData.insertTransactionV1O1);
         //then
-        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TXN_STATUS.PENDING);
+        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.PENDING);
     }
 
     @Test
@@ -94,7 +106,7 @@ public class TransactionProcessorTest {
         //when
         processor.process(MockData.insertTransactionV1O1);
         //then
-        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TXN_STATUS.PROCESSED);
+        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.PROCESSED);
     }
 
     @Test
@@ -123,7 +135,7 @@ public class TransactionProcessorTest {
         //when
         processor.process(MockData.insertTransactionV1O1);
         //then
-        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TXN_STATUS.REJECTED);
+        verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.REJECTED);
     }
 
     @Test
@@ -156,8 +168,8 @@ public class TransactionProcessorTest {
         verify(txnMock, times(2)).putTransactionWithStatus(txnCaptor.capture(), txnStatuCaptor.capture());
         Assert.assertEquals(txnCaptor.getAllValues().get(0), MockData.insertTransactionV1O1);
         Assert.assertEquals(txnCaptor.getAllValues().get(1), MockData.updateTransactionV2O1);
-        Assert.assertEquals(txnStatuCaptor.getAllValues().get(0), TXN_STATUS.PROCESSED);
-        Assert.assertEquals(txnStatuCaptor.getAllValues().get(1), TXN_STATUS.PROCESSED);
+        Assert.assertEquals(txnStatuCaptor.getAllValues().get(0), TransactionStatus.PROCESSED);
+        Assert.assertEquals(txnStatuCaptor.getAllValues().get(1), TransactionStatus.PROCESSED);
     }
 
 }

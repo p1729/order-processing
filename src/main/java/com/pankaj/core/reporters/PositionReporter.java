@@ -4,20 +4,18 @@ import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 import com.pankaj.core.models.Position;
 import com.pankaj.core.stores.OrderStore;
-import lombok.extern.slf4j.Slf4j;
+import com.pankaj.core.utils.OrderUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static com.pankaj.core.enums.SIDE_TYPE.*;
-import static com.pankaj.core.enums.TXN_TYPE.*;
+import static com.pankaj.core.enums.SideType.*;
+import static com.pankaj.core.enums.TransactionType.*;
 import static com.pankaj.core.utils.OrderUtils.*;
 
 public enum PositionReporter implements Reporter {
@@ -26,7 +24,6 @@ public enum PositionReporter implements Reporter {
     private final ConcurrentHashMap<String, Boolean> reportedOrderVersions = new ConcurrentHashMap<>();
     private final OrderStore store = OrderStore.getInstance();
     private final ConcurrentHashMap<String, Long> positions = new ConcurrentHashMap<>();
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public void print() {
         positions.forEach((key, value) -> System.out.println(String.format("%s %d", key, value)));
@@ -34,13 +31,13 @@ public enum PositionReporter implements Reporter {
 
     //TODO: Refactor for process only new orders
     public void prepare() {
-        Map<String, Long> newPositions = this.store.getStore().stream()
+        Map<String, Long> newPositions = getStreamFromIterator(store.iterator())
                 .filter(order -> order.getVersions().size() > 0)
                 .map(order -> {
                     String sym = getUpdatedSymbolOfOrder(order);
                     long valueOfOrder = getNewValueOfOrder(order);
                     return new Position(sym, valueOfOrder);
-                }).collect(Collectors.toConcurrentMap(Position::getSym, Position::getValue, Long::sum));
+                }).collect(Collectors.toMap(Position::getSym, Position::getValue, Long::sum));
 
         positions.putAll(newPositions);
     }

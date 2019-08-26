@@ -1,7 +1,7 @@
 package com.pankaj.core.models;
 
-import com.pankaj.core.enums.SIDE_TYPE;
-import com.pankaj.core.enums.TXN_TYPE;
+import com.pankaj.core.enums.SideType;
+import com.pankaj.core.enums.TransactionType;
 import lombok.Data;
 
 @Data
@@ -12,8 +12,8 @@ public class OrderVersion implements Comparable<OrderVersion> {
     private final long versionId;
     private final String sym;
     private final long qty;
-    private final Enum<TXN_TYPE> txnType;
-    private final Enum<SIDE_TYPE> sideType;
+    private final Enum<TransactionType> txnType;
+    private final Enum<SideType> sideType;
 
     public int compareTo(OrderVersion second) {
         return Long.compare(this.versionId, second.versionId);

@@ -49,7 +49,7 @@ public class PositionReporterTest {
         //Given
         OrderStore mock = mock(OrderStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", mock);
-        when(mock.getStore()).thenReturn(MockData.listOfInsertOrders);
+        when(mock.iterator()).thenReturn(MockData.listOfInsertOrders.iterator());
 
         Field store = PositionReporter.class.getDeclaredField("store");
         store.setAccessible(true);
@@ -67,7 +67,7 @@ public class PositionReporterTest {
         //Given
         OrderStore mock = mock(OrderStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", mock);
-        when(mock.getStore()).thenReturn(MockData.listOfUpdateOrders);
+        when(mock.iterator()).thenReturn(MockData.listOfUpdateOrders.iterator());
 
         Field store = PositionReporter.class.getDeclaredField("store");
         store.setAccessible(true);
@@ -86,7 +86,7 @@ public class PositionReporterTest {
         //Given
         OrderStore mock = mock(OrderStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", mock);
-        when(mock.getStore()).thenReturn(MockData.listOfCancelOrders);
+        when(mock.iterator()).thenReturn(MockData.listOfCancelOrders.iterator());
 
         Field store = PositionReporter.class.getDeclaredField("store");
         store.setAccessible(true);
@@ -104,7 +104,7 @@ public class PositionReporterTest {
         //Given
         OrderStore mock = mock(OrderStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", mock);
-        when(mock.getStore()).thenReturn(MockData.listOfMixOfOrders);
+        when(mock.iterator()).thenReturn(MockData.listOfMixOfOrders.iterator());
 
         Field store = PositionReporter.class.getDeclaredField("store");
         store.setAccessible(true);

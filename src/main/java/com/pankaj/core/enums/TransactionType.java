@@ -1,9 +1,9 @@
 package com.pankaj.core.enums;
 
-public enum TXN_TYPE {
+public enum TransactionType {
     INSERT, UPDATE, CANCEL;
 
-    public static TXN_TYPE of(int i) {
+    public static TransactionType of(int i) {
         switch(i) {
             case 2: return UPDATE;
             case 3: return CANCEL;

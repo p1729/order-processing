@@ -2,8 +2,8 @@ package com.pankaj;
 
 import com.pankaj.core.processors.Processor;
 import com.pankaj.core.processors.TransactionProcessor;
-import com.pankaj.core.enums.SIDE_TYPE;
-import com.pankaj.core.enums.TXN_TYPE;
+import com.pankaj.core.enums.SideType;
+import com.pankaj.core.enums.TransactionType;
 import com.pankaj.core.models.Transaction;
 
 import java.util.Scanner;
@@ -18,7 +18,7 @@ public class Client {
             System.out.println("Please enter the transaction details..");
             System.out.println("TxnId, ordId, verId, symbol, qty, opn, side");
             Transaction txn = new Transaction(sc.nextLong(), sc.nextLong(), sc.nextLong(), sc.next("[A-Za-z]+"),
-                    sc.nextLong(), TXN_TYPE.of(sc.nextInt()), SIDE_TYPE.of(sc.nextInt()));
+                    sc.nextLong(), TransactionType.of(sc.nextInt()), SideType.of(sc.nextInt()));
             processor.process(txn);
         }
     }
