@@ -24,7 +24,9 @@ public enum OrderStore implements Iterable<Order> {
         return getOrderByIdForWrite(orderId).map(Order::shallowCopyOfAllLists);
     }
 
-    public void addOrder(Order order) {
+    public void addOrder(long orderId, OrderVersion... versions) {
+        List<OrderVersion> list = new ArrayList<>(Arrays.asList(versions));
+        Order order = new Order(orderId, list);
         readWriteLock.writeLock().lock();
         store.add(order);
         readWriteLock.writeLock().unlock();

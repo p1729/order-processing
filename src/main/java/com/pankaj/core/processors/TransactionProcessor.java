@@ -7,9 +7,7 @@ import com.pankaj.core.rules.RulesStore;
 import com.pankaj.core.stores.OrderStore;
 import com.pankaj.core.stores.TransactionStore;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,12 +38,12 @@ public enum TransactionProcessor implements Processor {
                 } else if (RulesStore.getTransactionOrderProcessingRule().test(txn, order)) {
                     store.putTransactionWithStatus(txn, PROCESSED);
                     List<Transaction> pendingTxns = store.getTransactionOfOrdersByStatus(txn.getOrderId(), PENDING);
-                    pendingTxns.sort(ORDER_VERSION_COMPARATOR);
+                    OrderVersion version = new OrderVersion(txn.getVersionId(), txn.getSymbol(), txn.getQty(), txn.getTxnType(), txn.getSideType());
                     if (Objects.isNull(order)) {
-                        order = new Order(txn.getOrderId(), new ArrayList<>());
-                        orders.addOrder(order);
+                        orders.addOrder(txn.getOrderId(), version);
+                    } else {
+                        orders.addOrderVersion(txn.getOrderId(), version);
                     }
-                    orders.addOrderVersion(txn.getOrderId(), new OrderVersion(txn.getVersionId(), txn.getSymbol(), txn.getQty(), txn.getTxnType(), txn.getSideType()));
                     store.removeTransactionsOfStatus(pendingTxns, PENDING);
                     //TODO: Refactor by events maybe or Q or AOP ?
                     PositionReporter.getInstance().prepare();
