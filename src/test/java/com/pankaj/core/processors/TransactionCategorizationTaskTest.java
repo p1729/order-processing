@@ -1,7 +1,6 @@
 package com.pankaj.core.processors;
 
 import com.pankaj.core.MockData;
-import com.pankaj.core.MyTestExecutor;
 import com.pankaj.core.enums.TransactionStatus;
 import com.pankaj.core.models.Transaction;
 import com.pankaj.core.reporters.PositionReporter;
@@ -24,22 +23,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({OrderStore.class, TransactionStore.class, RulesStore.class, Executors.class, PositionReporter.class,
-        TransactionProcessor.class})
-public class TransactionProcessorTest {
+@PrepareForTest({OrderStore.class, TransactionStore.class, RulesStore.class, Executors.class, PositionReporter.class})
+public class TransactionCategorizationTaskTest {
 
     @Captor
     ArgumentCaptor<Transaction> txnCaptor;
 
     @Captor
-    ArgumentCaptor<TransactionStatus> txnStatuCaptor;
+    ArgumentCaptor<TransactionStatus> txnStatusCaptor;
 
     @Before
     public void setup() {
@@ -54,27 +52,25 @@ public class TransactionProcessorTest {
     public void givenTxn_whenPendingRuleApplied_thenItsNotProcessed() throws NoSuchFieldException, IllegalAccessException {
         //Given
         mockStatic(RulesStore.class);
-        mockStatic(Executors.class);
         OrderStore orderMock = mock(OrderStore.class);
         TransactionStore txnMock = mock(TransactionStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", orderMock);
         Whitebox.setInternalState(TransactionStore.class, "INSTANCE", txnMock);
-        when(Executors.newFixedThreadPool(anyInt())).thenReturn(new MyTestExecutor());
         when(orderMock.getOrderById(anyLong())).thenReturn(Optional.empty());
         when(RulesStore.getPendingTransactionOrderRule()).thenReturn((a,b) -> true);
         when(RulesStore.getRejectedTransactionRule()).thenReturn((a,b) -> false);
         when(RulesStore.getTransactionOrderProcessingRule()).thenReturn((a,b) -> false);
         when(txnMock.getTransactionOfOrdersByStatus(anyLong(), anyObject())).thenReturn(List.of(MockData.cancelTransactionV2O1));
-        Processor processor = TransactionProcessor.getInstance();
+        TransactionCategorizationTask task = new TransactionCategorizationTask(MockData.insertTransactionV1O1);
 
-        Field store = TransactionProcessor.class.getDeclaredField("store");
+        Field store = TransactionCategorizationTask.class.getDeclaredField("store");
         store.setAccessible(true);
-        store.set(processor, txnMock);
-        Field orders = TransactionProcessor.class.getDeclaredField("orders");
+        store.set(task, txnMock);
+        Field orders = TransactionCategorizationTask.class.getDeclaredField("orders");
         orders.setAccessible(true);
-        orders.set(processor, orderMock);
+        orders.set(task, orderMock);
         //when
-        processor.process(MockData.insertTransactionV1O1);
+        task.run();
         //then
         verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.PENDING);
     }
@@ -83,27 +79,26 @@ public class TransactionProcessorTest {
     public void givenTxn_whenProcessRuleApplied_thenItsProcessed() throws NoSuchFieldException, IllegalAccessException {
         //given
         mockStatic(RulesStore.class);
-        mockStatic(Executors.class);
         OrderStore orderMock = mock(OrderStore.class);
         TransactionStore txnMock = mock(TransactionStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", orderMock);
         Whitebox.setInternalState(TransactionStore.class, "INSTANCE", txnMock);
-        when(Executors.newFixedThreadPool(anyInt())).thenReturn(new MyTestExecutor());
         when(orderMock.getOrderById(anyLong())).thenReturn(Optional.empty());
         when(RulesStore.getPendingTransactionOrderRule()).thenReturn((a,b) -> false);
         when(RulesStore.getRejectedTransactionRule()).thenReturn((a,b) -> false);
         when(RulesStore.getTransactionOrderProcessingRule()).thenReturn((a,b) -> true);
         when(txnMock.getTransactionOfOrdersByStatus(anyLong(), anyObject())).thenReturn(Collections.emptyList());
 
-        Processor processor = TransactionProcessor.getInstance();
-        Field store = TransactionProcessor.class.getDeclaredField("store");
+        TransactionCategorizationTask task = new TransactionCategorizationTask(MockData.insertTransactionV1O1);
+
+        Field store = TransactionCategorizationTask.class.getDeclaredField("store");
         store.setAccessible(true);
-        store.set(processor, txnMock);
-        Field orders = TransactionProcessor.class.getDeclaredField("orders");
+        store.set(task, txnMock);
+        Field orders = TransactionCategorizationTask.class.getDeclaredField("orders");
         orders.setAccessible(true);
-        orders.set(processor, orderMock);
+        orders.set(task, orderMock);
         //when
-        processor.process(MockData.insertTransactionV1O1);
+        task.run();
         //then
         verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.PROCESSED);
     }
@@ -112,27 +107,25 @@ public class TransactionProcessorTest {
     public void givenTxn_whenRejectRuleApplied_thenItsRejected() throws NoSuchFieldException, IllegalAccessException {
         //given
         mockStatic(RulesStore.class);
-        mockStatic(Executors.class);
         OrderStore orderMock = mock(OrderStore.class);
         TransactionStore txnMock = mock(TransactionStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", orderMock);
         Whitebox.setInternalState(TransactionStore.class, "INSTANCE", txnMock);
-        when(Executors.newFixedThreadPool(anyInt())).thenReturn(new MyTestExecutor());
         when(orderMock.getOrderById(anyLong())).thenReturn(Optional.empty());
         when(RulesStore.getPendingTransactionOrderRule()).thenReturn((a,b) -> false);
         when(RulesStore.getRejectedTransactionRule()).thenReturn((a,b) -> true);
         when(RulesStore.getTransactionOrderProcessingRule()).thenReturn((a,b) -> false);
         when(txnMock.getTransactionOfOrdersByStatus(anyLong(), anyObject())).thenReturn(Collections.emptyList());
 
-        Processor processor = TransactionProcessor.getInstance();
-        Field store = TransactionProcessor.class.getDeclaredField("store");
+        TransactionCategorizationTask task = new TransactionCategorizationTask(MockData.insertTransactionV1O1);
+        Field store = TransactionCategorizationTask.class.getDeclaredField("store");
         store.setAccessible(true);
-        store.set(processor, txnMock);
-        Field orders = TransactionProcessor.class.getDeclaredField("orders");
+        store.set(task, txnMock);
+        Field orders = TransactionCategorizationTask.class.getDeclaredField("orders");
         orders.setAccessible(true);
-        orders.set(processor, orderMock);
+        orders.set(task, orderMock);
         //when
-        processor.process(MockData.insertTransactionV1O1);
+        task.run();
         //then
         verify(txnMock, times(1)).putTransactionWithStatus(MockData.insertTransactionV1O1, TransactionStatus.REJECTED);
     }
@@ -142,33 +135,31 @@ public class TransactionProcessorTest {
 
         //given
         mockStatic(RulesStore.class);
-        mockStatic(Executors.class);
         OrderStore orderMock = mock(OrderStore.class);
         TransactionStore txnMock = mock(TransactionStore.class);
         Whitebox.setInternalState(OrderStore.class, "INSTANCE", orderMock);
         Whitebox.setInternalState(TransactionStore.class, "INSTANCE", txnMock);
-        when(Executors.newFixedThreadPool(anyInt())).thenReturn(new MyTestExecutor());
         when(orderMock.getOrderById(anyLong())).thenReturn(Optional.empty());
         when(RulesStore.getPendingTransactionOrderRule()).thenReturn((a,b) -> false);
         when(RulesStore.getRejectedTransactionRule()).thenReturn((a,b) -> false);
         when(RulesStore.getTransactionOrderProcessingRule()).thenReturn((a,b) -> true);
         when(txnMock.getTransactionOfOrdersByStatus(anyLong(), anyObject())).thenReturn(MockData.listofOrderVersion, Collections.emptyList());
 
-        Processor processor = TransactionProcessor.getInstance();
-        Field store = TransactionProcessor.class.getDeclaredField("store");
+        TransactionCategorizationTask task = new TransactionCategorizationTask(MockData.insertTransactionV1O1);
+        Field store = TransactionCategorizationTask.class.getDeclaredField("store");
         store.setAccessible(true);
-        store.set(processor, txnMock);
-        Field orders = TransactionProcessor.class.getDeclaredField("orders");
+        store.set(task, txnMock);
+        Field orders = TransactionCategorizationTask.class.getDeclaredField("orders");
         orders.setAccessible(true);
-        orders.set(processor, orderMock);
+        orders.set(task, orderMock);
         //when
-        processor.process(MockData.insertTransactionV1O1);
+        task.run();
         //then
-        verify(txnMock, times(2)).putTransactionWithStatus(txnCaptor.capture(), txnStatuCaptor.capture());
+        verify(txnMock, times(2)).putTransactionWithStatus(txnCaptor.capture(), txnStatusCaptor.capture());
         Assert.assertEquals(txnCaptor.getAllValues().get(0), MockData.insertTransactionV1O1);
         Assert.assertEquals(txnCaptor.getAllValues().get(1), MockData.updateTransactionV2O1);
-        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatuCaptor.getAllValues().get(0));
-        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatuCaptor.getAllValues().get(1));
+        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatusCaptor.getAllValues().get(0));
+        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatusCaptor.getAllValues().get(1));
     }
 
 }
