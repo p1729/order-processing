@@ -4,19 +4,16 @@ import com.pankaj.core.models.Order;
 import com.pankaj.core.models.OrderVersion;
 import com.pankaj.core.models.Position;
 import com.pankaj.core.stores.OrderStore;
-import com.pankaj.core.utils.OrderUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-import static com.pankaj.core.enums.SideType.*;
-import static com.pankaj.core.enums.TransactionType.*;
-import static com.pankaj.core.utils.OrderUtils.*;
+import static com.pankaj.core.enums.SideType.SELL;
+import static com.pankaj.core.enums.TransactionType.CANCEL;
+import static com.pankaj.core.utils.OrderUtils.getStreamFromIterator;
+import static com.pankaj.core.utils.OrderUtils.isOrderCanceled;
 
 public enum PositionReporter implements Reporter {
     INSTANCE;
@@ -32,7 +29,7 @@ public enum PositionReporter implements Reporter {
     //TODO: Refactor for process only new orders
     public void prepare() {
         Map<String, Long> newPositions = getStreamFromIterator(store.iterator())
-                .filter(order -> order.getVersions().size() > 0)
+                .filter(order -> !order.getVersions().isEmpty())
                 .map(order -> {
                     String sym = getUpdatedSymbolOfOrder(order);
                     long valueOfOrder = getNewValueOfOrder(order);

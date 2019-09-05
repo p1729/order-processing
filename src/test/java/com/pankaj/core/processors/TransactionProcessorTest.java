@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -168,8 +167,8 @@ public class TransactionProcessorTest {
         verify(txnMock, times(2)).putTransactionWithStatus(txnCaptor.capture(), txnStatuCaptor.capture());
         Assert.assertEquals(txnCaptor.getAllValues().get(0), MockData.insertTransactionV1O1);
         Assert.assertEquals(txnCaptor.getAllValues().get(1), MockData.updateTransactionV2O1);
-        Assert.assertEquals(txnStatuCaptor.getAllValues().get(0), TransactionStatus.PROCESSED);
-        Assert.assertEquals(txnStatuCaptor.getAllValues().get(1), TransactionStatus.PROCESSED);
+        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatuCaptor.getAllValues().get(0));
+        Assert.assertEquals(TransactionStatus.PROCESSED, txnStatuCaptor.getAllValues().get(1));
     }
 
 }

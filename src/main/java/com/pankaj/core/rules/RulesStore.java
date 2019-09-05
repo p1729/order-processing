@@ -6,10 +6,8 @@ import com.pankaj.core.models.Transaction;
 import java.util.function.BiPredicate;
 
 import static com.pankaj.core.enums.TransactionType.*;
-import static com.pankaj.core.utils.OrderUtils.isNotFirstOrderVersion;
-import static com.pankaj.core.utils.OrderUtils.isOrderCanceled;
-import static com.pankaj.core.utils.OrderUtils.getNextOrderVersionInSequence;
 import static com.pankaj.core.models.OrderVersion.FIRST_ORDER_VERSION;
+import static com.pankaj.core.utils.OrderUtils.*;
 
 public class RulesStore {
 

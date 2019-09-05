@@ -1,18 +1,20 @@
 package com.pankaj.core.processors;
 
+import com.pankaj.core.models.Order;
+import com.pankaj.core.models.OrderVersion;
+import com.pankaj.core.models.Transaction;
 import com.pankaj.core.reporters.PositionReporter;
 import com.pankaj.core.reporters.Reporter;
-import com.pankaj.core.models.*;
 import com.pankaj.core.rules.RulesStore;
 import com.pankaj.core.stores.OrderStore;
 import com.pankaj.core.stores.TransactionStore;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.pankaj.core.enums.TransactionStatus.*;
-import static com.pankaj.core.models.Transaction.ORDER_VERSION_COMPARATOR;
 
 public enum TransactionProcessor implements Processor {
     INSTANCE;
